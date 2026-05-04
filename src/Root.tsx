@@ -2,7 +2,7 @@ import { Composition } from "remotion";
 import { XarjiVideo } from "./video-scenes";
 
 const FPS = 30;
-const DURATION_SECS = 45;
+const DURATION_SECS = 50;
 
 export function RemotionRoot() {
   return (

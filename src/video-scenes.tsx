@@ -16,15 +16,16 @@ const FONTS = {
 };
 
 const T = {
-  s1: [0,    4.0],
-  s2: [4.0,  7.5],
-  s3: [7.5, 12.5],
-  s4: [12.5, 17.5],
-  s5: [17.5, 21.0],
-  s6: [21.0, 24.5],
-  s7: [24.5, 29.0],
-  s8: [29.0, 36.0],
-  s9: [36.0, 45.0],
+  s0: [0,    5.0],
+  s1: [5.0,  9.0],
+  s2: [9.0,  12.5],
+  s3: [12.5, 17.5],
+  s4: [17.5, 22.5],
+  s5: [22.5, 26.0],
+  s6: [26.0, 29.5],
+  s7: [29.5, 34.0],
+  s8: [34.0, 41.0],
+  s9: [41.0, 50.0],
 };
 
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
@@ -32,15 +33,16 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 // ── Caption bar ─────────────────────────────────────────────────────────────
 const VO_LINES = [
-  { t: [0,    4.0],  text: "Your bank doesn't send statements anymore. It sends texts." },
-  { t: [4.0,  7.5],  text: "Xarji reads them, on your phone, the moment they arrive." },
-  { t: [7.5, 12.5],  text: "Every charge, every refund, every merchant — parsed." },
-  { t: [12.5, 17.5], text: "Categorized, and sitting on one screen." },
-  { t: [17.5, 21.0], text: "Search a sentence." },
-  { t: [21.0, 24.5], text: "Set a budget." },
-  { t: [24.5, 29.0], text: "Ask the assistant where your money went last week." },
-  { t: [29.0, 36.0], text: "It runs locally. Your keys. Your data. Your machine." },
-  { t: [36.0, 45.0], text: "Talk to your money. — Xarji" },
+  { t: [0,    5.0],  text: "No multibanking catalog. No AI for finance. No budgeting planner. Until now." },
+  { t: [5.0,  9.0],  text: "Your bank doesn't send statements anymore. It sends texts." },
+  { t: [9.0,  12.5], text: "If you have a Mac and iPhone, iMessage delivers your bank texts automatically." },
+  { t: [12.5, 17.5], text: "Every charge, every refund, every merchant — parsed." },
+  { t: [17.5, 22.5], text: "Categorized, and sitting on one screen." },
+  { t: [22.5, 26.0], text: "Search a sentence." },
+  { t: [26.0, 29.5], text: "Set a budget." },
+  { t: [29.5, 34.0], text: "Ask the assistant where your money went last week." },
+  { t: [34.0, 41.0], text: "It runs locally. Your keys. Your data. Your machine." },
+  { t: [41.0, 50.0], text: "Talk to your money. — Xarji" },
 ];
 
 function Caption() {
@@ -90,6 +92,42 @@ function Brand() {
     <div style={{ position: "absolute", top: 32, left: 40, zIndex: 60, display: "flex", alignItems: "center", gap: 12 }}>
       <div style={{ width: 32, height: 32, borderRadius: 8, background: COLORS.coral, display: "grid", placeItems: "center", fontFamily: FONTS.sans, fontWeight: 700, color: "#fff", fontSize: 18, letterSpacing: "-0.02em" }}>x</div>
       <span style={{ fontFamily: FONTS.sans, fontWeight: 600, fontSize: 16, color: COLORS.ink }}>Xarji</span>
+    </div>
+  );
+}
+
+// ── Scene 0 — Problem statement ─────────────────────────────────────────────
+const PROBLEMS = [
+  { text: "No multibanking transaction catalog.", start: 0.5 },
+  { text: "No AI for finance analysis.",          start: 1.9 },
+  { text: "No budgeting planner.",               start: 3.2 },
+];
+
+function Scene0() {
+  const { localTime, duration } = useSprite();
+  const fade = clamp01(localTime / 0.4) * clamp01((duration - localTime) / 0.5);
+
+  return (
+    <div style={{ position: "absolute", inset: 0, opacity: fade, background: "#000", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "120px 96px" }}>
+      <div style={{ fontFamily: FONTS.mono, fontSize: 14, color: COLORS.coral, letterSpacing: "0.32em", textTransform: "uppercase", marginBottom: 64 }}>
+        THE PROBLEM TODAY
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 36, alignItems: "flex-start" }}>
+        {PROBLEMS.map((p, i) => {
+          const prog = clamp01((localTime - p.start) / 0.55);
+          const ease = 1 - Math.pow(1 - prog, 3);
+          return (
+            <div key={i} style={{ display: "flex", alignItems: "center", gap: 28, opacity: ease, transform: `translateY(${lerp(28, 0, ease)}px)` }}>
+              <div style={{ width: 32, height: 32, borderRadius: 8, border: `2px solid ${COLORS.coral}`, display: "grid", placeItems: "center", flexShrink: 0, color: COLORS.coral, fontFamily: FONTS.mono, fontSize: 18, fontWeight: 700 }}>
+                ×
+              </div>
+              <span style={{ fontFamily: FONTS.serif, fontStyle: "italic", fontSize: 72, color: COLORS.ink, letterSpacing: "-0.02em", lineHeight: 1.1 }}>
+                {p.text}
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -537,6 +575,7 @@ export function XarjiVideo() {
   return (
     <>
       <style>{`@keyframes p { 0%,100% { opacity:1 } 50% { opacity:0.3 } }`}</style>
+      <Sprite start={T.s0[0]} end={T.s0[1]}><Scene0 /></Sprite>
       <Sprite start={T.s1[0]} end={T.s1[1]}><Scene1 /></Sprite>
       <Sprite start={T.s2[0]} end={T.s2[1]}><Scene2 /></Sprite>
       <Sprite start={T.s3[0]} end={T.s3[1]}><Scene3 /></Sprite>
@@ -549,7 +588,7 @@ export function XarjiVideo() {
       <Brand />
       <HUD />
       <Caption />
-      <Audio src={staticFile("music.mp3")} volume={(f) => f > 1260 ? 0.65 * (1 - (f - 1260) / 90) : 0.65} />
+      <Audio src={staticFile("music.mp3")} volume={(f) => f > 1410 ? 0.65 * (1 - (f - 1410) / 90) : 0.65} />
       <SoundEffects />
     </>
   );
