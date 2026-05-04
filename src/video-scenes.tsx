@@ -17,15 +17,16 @@ const FONTS = {
 
 const T = {
   s0: [0,    5.0],
-  s1: [5.0,  9.0],
-  s2: [9.0,  12.5],
-  s3: [12.5, 17.5],
-  s4: [17.5, 22.5],
-  s5: [22.5, 26.0],
-  s6: [26.0, 29.5],
-  s7: [29.5, 34.0],
-  s8: [34.0, 41.0],
-  s9: [41.0, 50.0],
+  sBA:[5.0,  9.0],
+  s1: [9.0,  13.0],
+  s2: [13.0, 16.5],
+  s3: [16.5, 21.5],
+  s4: [21.5, 26.5],
+  s5: [26.5, 30.0],
+  s6: [30.0, 33.5],
+  s7: [33.5, 38.0],
+  s8: [38.0, 45.0],
+  s9: [45.0, 54.0],
 };
 
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v));
@@ -34,15 +35,16 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 // ── Caption bar ─────────────────────────────────────────────────────────────
 const VO_LINES = [
   { t: [0,    5.0],  text: "No multibanking catalog. No AI for finance. No budgeting planner. Until now." },
-  { t: [5.0,  9.0],  text: "Your bank doesn't send statements anymore. It sends texts." },
-  { t: [9.0,  12.5], text: "If you have a Mac and iPhone, iMessage delivers your bank texts automatically." },
-  { t: [12.5, 17.5], text: "Every charge, every refund, every merchant — parsed." },
-  { t: [17.5, 22.5], text: "Categorized, and sitting on one screen." },
-  { t: [22.5, 26.0], text: "Search a sentence." },
-  { t: [26.0, 29.5], text: "Set a budget." },
-  { t: [29.5, 34.0], text: "Ask the assistant where your money went last week." },
-  { t: [34.0, 41.0], text: "It runs locally. Your keys. Your data. Your machine." },
-  { t: [41.0, 50.0], text: "Talk to your money. — Xarji" },
+  { t: [5.0,  9.0],  text: "One app. Every bank. Total clarity." },
+  { t: [9.0,  13.0], text: "Your bank doesn't send statements anymore. It sends texts." },
+  { t: [13.0, 16.5], text: "If you have a Mac and iPhone, iMessage delivers your bank texts automatically." },
+  { t: [16.5, 21.5], text: "Every charge, every refund, every merchant — parsed." },
+  { t: [21.5, 26.5], text: "Categorized, and sitting on one screen." },
+  { t: [26.5, 30.0], text: "Search a sentence." },
+  { t: [30.0, 33.5], text: "Set a budget." },
+  { t: [33.5, 38.0], text: "Ask the assistant where your money went last week." },
+  { t: [38.0, 45.0], text: "It runs locally. Your keys. Your data. Your machine." },
+  { t: [45.0, 54.0], text: "Talk to your money. — Xarji" },
 ];
 
 function Caption() {
@@ -98,7 +100,11 @@ function Brand() {
 
 // ── Scene 0 — Problem statement ─────────────────────────────────────────────
 
-function FragmentedBanks() {
+function FragmentedBanks({ localTime }: { localTime: number }) {
+  const flicker = (seed: number) => {
+    const f = Math.sin(localTime * 7.3 + seed) * Math.sin(localTime * 13.1 + seed * 2);
+    return f > 0.3 ? "₾ ---" : f < -0.3 ? "₾ ???" : "₾ · · ·";
+  };
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
       <div style={{ fontFamily: FONTS.mono, fontSize: 11, color: COLORS.inkMute, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 6 }}>3 BANKS · 0 CONNECTION</div>
@@ -108,7 +114,7 @@ function FragmentedBanks() {
             <div style={{ width: 28, height: 28, borderRadius: 7, background: COLORS.line, display: "grid", placeItems: "center", fontFamily: FONTS.mono, fontSize: 10, color: COLORS.inkMute }}>{b[0]}</div>
             <span style={{ fontFamily: FONTS.sans, fontSize: 15, color: COLORS.inkMute }}>{b}</span>
           </div>
-          <span style={{ fontFamily: FONTS.mono, fontSize: 15, color: COLORS.inkMute }}>₾ ???</span>
+          <span style={{ fontFamily: FONTS.mono, fontSize: 15, color: COLORS.coral, opacity: 0.7 }}>{flicker(i * 3.7)}</span>
         </div>
       ))}
       <div style={{ textAlign: "center", fontFamily: FONTS.mono, fontSize: 11, color: COLORS.coral, letterSpacing: "0.2em", marginTop: 6, opacity: 0.75 }}>SILOED · NOT SYNCED</div>
@@ -134,13 +140,17 @@ function NoAI({ localTime }: { localTime: number }) {
   );
 }
 
-function NoBudget() {
-  const r = 72;
+function NoBudget({ localTime }: { localTime: number }) {
+  const r = 72, c = 2 * Math.PI * r;
+  const fillFrac = Math.max(0, Math.sin(localTime * 0.9) * 0.08);
   return (
     <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}>
       <div style={{ fontFamily: FONTS.mono, fontSize: 11, color: COLORS.inkMute, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 2 }}>NO LIMITS SET</div>
       <svg width="180" height="180" viewBox="0 0 180 180">
         <circle cx="90" cy="90" r={r} fill="none" stroke={COLORS.lineSoft} strokeWidth="10" />
+        <circle cx="90" cy="90" r={r} fill="none" stroke={COLORS.coral} strokeWidth="10"
+          strokeDasharray={c} strokeDashoffset={c * (1 - fillFrac)}
+          strokeLinecap="round" transform="rotate(-90 90 90)" style={{ opacity: 0.5 }} />
         <text x="90" y="86" textAnchor="middle" fontFamily={FONTS.sans} fontSize="28" fill={COLORS.inkMute} letterSpacing="-0.02em">₾ ?</text>
         <text x="90" y="110" textAnchor="middle" fontFamily={FONTS.mono} fontSize="11" fill={COLORS.inkMute} letterSpacing="0.18em">OF ₾ ???</text>
       </svg>
@@ -186,6 +196,73 @@ function Scene0() {
               <div style={{ fontFamily: FONTS.serif, fontStyle: "italic", fontSize: 30, color: COLORS.inkDim, textAlign: "center", lineHeight: 1.3, letterSpacing: "-0.01em" }}>
                 {label}
               </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ── Scene BA — Before / After ───────────────────────────────────────────────
+function SceneBA() {
+  const { localTime, duration } = useSprite();
+  const fade = clamp01(localTime / 0.4) * clamp01((duration - localTime) / 0.5);
+  const dividerProg = clamp01((localTime - 0.3) / 0.5);
+  const ease3 = (t: number) => 1 - Math.pow(1 - t, 3);
+  const afterProg = ease3(clamp01((localTime - 0.7) / 0.7));
+  const chaosItems = [
+    { label: "TBC App",      sub: "₾ ???",    x: 6,  y: 14, rot: -3 },
+    { label: "BOG App",      sub: "₾ ???",    x: 20, y: 46, rot:  2 },
+    { label: "Credo",        sub: "₾ ???",    x: 4,  y: 72, rot: -2 },
+    { label: "Spreadsheet",  sub: "47 rows",  x: 52, y: 8,  rot:  3 },
+    { label: "Receipts",     sub: "23 photos",x: 50, y: 40, rot: -1 },
+    { label: "Notes.txt",    sub: "messy",    x: 55, y: 68, rot:  2 },
+  ];
+  return (
+    <div style={{ position: "absolute", inset: 0, opacity: fade, background: COLORS.bg, display: "flex", overflow: "hidden" }}>
+      <div style={{ flex: 1, position: "relative", padding: "64px 52px" }}>
+        <div style={{ fontFamily: FONTS.mono, fontSize: 12, color: COLORS.coral, letterSpacing: "0.28em", textTransform: "uppercase", marginBottom: 28 }}>BEFORE</div>
+        {chaosItems.map((item, i) => {
+          const ap = ease3(clamp01((localTime - 0.1 - i * 0.07) / 0.35));
+          return (
+            <div key={i} style={{ position: "absolute", left: `${item.x}%`, top: `${item.y + 8}%`, opacity: ap * 0.82, transform: `rotate(${item.rot}deg)` }}>
+              <div style={{ background: COLORS.surface, border: `1px solid ${COLORS.lineSoft}`, borderRadius: 12, padding: "12px 16px", display: "flex", flexDirection: "column", gap: 3, minWidth: 148 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <div style={{ width: 18, height: 18, borderRadius: 4, background: COLORS.line }} />
+                  <span style={{ fontFamily: FONTS.sans, fontSize: 13, color: COLORS.inkDim }}>{item.label}</span>
+                </div>
+                <span style={{ fontFamily: FONTS.mono, fontSize: 11, color: COLORS.inkMute }}>{item.sub}</span>
+              </div>
+            </div>
+          );
+        })}
+        <div style={{ position: "absolute", bottom: 80, left: 52, fontFamily: FONTS.serif, fontStyle: "italic", fontSize: 100, color: COLORS.inkMute, opacity: 0.08, letterSpacing: "-0.02em", pointerEvents: "none" }}>???</div>
+      </div>
+      <div style={{ width: 2, alignSelf: "stretch", flexShrink: 0, background: `linear-gradient(to bottom, transparent 5%, ${COLORS.coral} 30%, ${COLORS.coral} 70%, transparent 95%)`, opacity: dividerProg, boxShadow: `0 0 18px rgba(232,93,74,0.5)` }} />
+      <div style={{ flex: 1, position: "relative", padding: "64px 52px", opacity: afterProg, display: "flex", flexDirection: "column" }}>
+        <div style={{ fontFamily: FONTS.mono, fontSize: 12, color: COLORS.green, letterSpacing: "0.28em", textTransform: "uppercase", marginBottom: 28 }}>AFTER · XARJI</div>
+        <div style={{ background: COLORS.surface, border: `1px solid ${COLORS.lineSoft}`, borderRadius: 18, padding: "24px 28px", marginBottom: 16 }}>
+          <div style={{ fontFamily: FONTS.mono, fontSize: 11, color: COLORS.inkMute, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 10 }}>ALL BANKS · COMBINED</div>
+          <div style={{ fontFamily: FONTS.sans, fontSize: 80, fontWeight: 500, color: COLORS.ink, letterSpacing: "-0.04em", lineHeight: 1 }}>₾5,975</div>
+          <div style={{ fontFamily: FONTS.mono, fontSize: 11, color: COLORS.green, marginTop: 10, letterSpacing: "0.18em", display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ width: 7, height: 7, borderRadius: 4, background: COLORS.green, display: "inline-block" }} />
+            3 banks · live sync
+          </div>
+        </div>
+        {[
+          { bank: "TBC Bank",        v: "₾1,842", col: "#4a90d9" },
+          { bank: "Bank of Georgia", v: "₾3,241", col: COLORS.coral },
+          { bank: "Credo Bank",      v: "₾892",   col: COLORS.green },
+        ].map((b, i) => {
+          const bp = ease3(clamp01((localTime - 1.1 - i * 0.14) / 0.35));
+          return (
+            <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "14px 18px", marginBottom: 10, background: COLORS.surface2, borderRadius: 12, border: `1px solid ${COLORS.lineSoft}`, opacity: bp, transform: `translateX(${lerp(24, 0, bp)}px)` }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ width: 8, height: 8, borderRadius: 4, background: b.col }} />
+                <span style={{ fontFamily: FONTS.sans, fontSize: 17, color: COLORS.ink }}>{b.bank}</span>
+              </div>
+              <span style={{ fontFamily: FONTS.mono, fontSize: 17, color: COLORS.ink }}>{b.v}</span>
             </div>
           );
         })}
@@ -331,26 +408,54 @@ function Scene3() {
 }
 
 // ── Scene 4 — Dashboard ─────────────────────────────────────────────────────
+const BANK_ACCOUNTS = [
+  { bank: "TBC Bank",        balance: 1842, color: "#4a90d9" },
+  { bank: "Bank of Georgia", balance: 3241, color: COLORS.coral },
+  { bank: "Credo Bank",      balance: 892,  color: COLORS.green },
+];
+const TOTAL_BALANCE = BANK_ACCOUNTS.reduce((s, b) => s + b.balance, 0);
+
 function Scene4() {
   const { localTime, duration } = useSprite();
   const fade = clamp01(localTime / 0.4) * clamp01((duration - localTime) / 0.5);
-  const num = Math.floor(lerp(0, 4287, clamp01(localTime / 2.5)));
   const sparkProg = clamp01((localTime - 0.6) / 2.5);
   const livePanel = clamp01((localTime - 2.5) / 0.6);
+  const ease3 = (t: number) => 1 - Math.pow(1 - t, 3);
+  const totalProg = ease3(clamp01((localTime - 0.9) / 0.6));
+  const totalNum = Math.floor(lerp(0, TOTAL_BALANCE, totalProg));
   const points = [40, 60, 50, 75, 55, 80, 65, 90, 70, 95, 85, 100];
   const visiblePoints = Math.floor(points.length * sparkProg);
 
   return (
     <div style={{ position: "absolute", inset: 0, opacity: fade, padding: "120px 96px", display: "flex", flexDirection: "column" }}>
       <div style={{ fontFamily: FONTS.mono, fontSize: 14, color: COLORS.inkMute, letterSpacing: "0.22em", textTransform: "uppercase", marginBottom: 24 }}>
-        <span style={{ color: COLORS.coral, marginRight: 14 }}>04</span>OVERVIEW
+        <span style={{ color: COLORS.coral, marginRight: 14 }}>04</span>MULTIBANK OVERVIEW
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 32, flex: 1 }}>
-        <div style={{ background: COLORS.surface, border: `1px solid ${COLORS.lineSoft}`, borderRadius: 18, padding: "40px 48px", display: "flex", flexDirection: "column" }}>
-          <div style={{ fontFamily: FONTS.mono, fontSize: 14, color: COLORS.inkMute, letterSpacing: "0.22em", textTransform: "uppercase", marginBottom: 16 }}>SPENT THIS YEAR</div>
-          <div style={{ fontFamily: FONTS.sans, fontSize: 160, fontWeight: 500, color: COLORS.coral, letterSpacing: "-0.04em", lineHeight: 1 }}>₾{num.toLocaleString()}</div>
-          <div style={{ flex: 1, marginTop: 32, position: "relative" }}>
-            <svg width="100%" height="240" viewBox="0 0 600 240" preserveAspectRatio="none" style={{ display: "block" }}>
+        <div style={{ background: COLORS.surface, border: `1px solid ${COLORS.lineSoft}`, borderRadius: 18, padding: "36px 44px", display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 28 }}>
+            {BANK_ACCOUNTS.map((b, i) => {
+              const p = ease3(clamp01((localTime - 0.3 - i * 0.2) / 0.5));
+              const bNum = Math.floor(lerp(0, b.balance, ease3(clamp01((localTime - 0.3 - i * 0.2) / 0.8))));
+              return (
+                <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 20px", background: COLORS.surface2, borderRadius: 12, border: `1px solid ${COLORS.lineSoft}`, opacity: p, transform: `translateX(${lerp(-24, 0, p)}px)` }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    <div style={{ width: 10, height: 10, borderRadius: 5, background: b.color }} />
+                    <span style={{ fontFamily: FONTS.sans, fontSize: 20, color: COLORS.ink }}>{b.bank}</span>
+                  </div>
+                  <span style={{ fontFamily: FONTS.mono, fontSize: 22, color: COLORS.ink }}>₾{bNum.toLocaleString()}</span>
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ borderTop: `1px solid ${COLORS.lineSoft}`, paddingTop: 20, marginBottom: 28, opacity: totalProg }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+              <div style={{ fontFamily: FONTS.mono, fontSize: 13, color: COLORS.inkMute, letterSpacing: "0.22em", textTransform: "uppercase" }}>COMBINED TOTAL</div>
+              <div style={{ fontFamily: FONTS.sans, fontSize: 72, fontWeight: 500, color: COLORS.coral, letterSpacing: "-0.04em", lineHeight: 1 }}>₾{totalNum.toLocaleString()}</div>
+            </div>
+          </div>
+          <div style={{ flex: 1, position: "relative" }}>
+            <svg width="100%" height="180" viewBox="0 0 600 180" preserveAspectRatio="none" style={{ display: "block" }}>
               <defs>
                 <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stopColor={COLORS.coral} stopOpacity={0.4} />
@@ -359,19 +464,14 @@ function Scene4() {
               </defs>
               {(() => {
                 const pts = points.slice(0, Math.max(2, visiblePoints + 1));
-                const w = 600, h = 240, pad = 20;
+                const w = 600, h = 180, pad = 16;
                 const stepX = (w - pad * 2) / (points.length - 1);
                 const path = pts.map((p, i) => `${i === 0 ? "M" : "L"} ${pad + i * stepX} ${h - pad - (p / 100) * (h - pad * 2)}`).join(" ");
                 const fill = path + ` L ${pad + (pts.length - 1) * stepX} ${h - pad} L ${pad} ${h - pad} Z`;
-                return (
-                  <>
-                    <path d={fill} fill="url(#sg)" />
-                    <path d={path} fill="none" stroke={COLORS.coral} strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" />
-                  </>
-                );
+                return (<><path d={fill} fill="url(#sg)" /><path d={path} fill="none" stroke={COLORS.coral} strokeWidth="3" strokeLinejoin="round" strokeLinecap="round" /></>);
               })()}
             </svg>
-            <div style={{ position: "absolute", bottom: 0, left: 20, right: 20, display: "flex", justifyContent: "space-between", fontFamily: FONTS.mono, fontSize: 12, color: COLORS.inkMute, letterSpacing: "0.18em" }}>
+            <div style={{ position: "absolute", bottom: 0, left: 16, right: 16, display: "flex", justifyContent: "space-between", fontFamily: FONTS.mono, fontSize: 12, color: COLORS.inkMute, letterSpacing: "0.18em" }}>
               <span>SEP</span><span>DEC</span><span>MAR</span><span>MAY</span>
             </div>
           </div>
@@ -544,7 +644,7 @@ function Scene7() {
         </div>
         <div style={{ marginTop: 24, marginLeft: 62, fontFamily: FONTS.mono, fontSize: 13, color: COLORS.inkMute, letterSpacing: "0.22em", textTransform: "uppercase", opacity: typeProg }}>
           <span style={{ color: COLORS.green }}>● </span>
-          CLAUDE · runs locally · your key
+          GPT or Claude · your API key
         </div>
       </div>
     </div>
@@ -609,27 +709,57 @@ function Scene8() {
 function Scene9() {
   const { localTime, duration } = useSprite();
   const fade = clamp01(localTime / 0.5) * clamp01((duration - localTime) / 0.6);
+  const ease3 = (t: number) => 1 - Math.pow(1 - t, 3);
   const tagProg = clamp01((localTime - 0.2) / 0.8);
-  const tagFadeOut = localTime > 3.2 ? clamp01(1 - (localTime - 3.2) / 0.6) : 1;
-  const wordmarkProg = clamp01((localTime - 3.6) / 0.8);
-  const urlProg = clamp01((localTime - 5.0) / 0.5);
+  const tagFadeOut = localTime > 4.0 ? clamp01(1 - (localTime - 4.0) / 0.7) : 1;
+  const wordmarkProg = ease3(clamp01((localTime - 4.5) / 0.9));
+  const urlProg = ease3(clamp01((localTime - 5.6) / 0.5));
+  const ctaProg = ease3(clamp01((localTime - 6.2) / 0.6));
+  const badgeProg = ease3(clamp01((localTime - 7.0) / 0.5));
 
   return (
     <div style={{ position: "absolute", inset: 0, background: "#000", opacity: fade, display: "grid", placeItems: "center" }}>
-      <div style={{ textAlign: "center" }}>
-        <div style={{ opacity: tagProg * tagFadeOut, fontFamily: FONTS.serif, fontStyle: "italic", fontSize: 140, color: COLORS.ink, letterSpacing: "-0.02em", lineHeight: 1, marginBottom: 40 }}>
+      <div style={{ textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div style={{ opacity: tagProg * tagFadeOut, fontFamily: FONTS.serif, fontStyle: "italic", fontSize: 140, color: COLORS.ink, letterSpacing: "-0.02em", lineHeight: 1, marginBottom: 48 }}>
           Talk to your <span style={{ color: COLORS.coral }}>money.</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 24, opacity: wordmarkProg, transform: `scale(${lerp(0.92, 1, wordmarkProg)})` }}>
           <div style={{ width: 96, height: 96, borderRadius: 22, background: COLORS.coral, display: "grid", placeItems: "center", fontFamily: FONTS.sans, fontWeight: 700, color: "#fff", fontSize: 58, letterSpacing: "-0.04em", boxShadow: "0 0 60px rgba(232,93,74,0.45)" }}>x</div>
           <div style={{ fontFamily: FONTS.sans, fontWeight: 600, fontSize: 140, color: COLORS.ink, letterSpacing: "-0.04em" }}>Xarji</div>
         </div>
-        <div style={{ marginTop: 48, opacity: urlProg, fontFamily: FONTS.mono, fontSize: 24, color: COLORS.inkDim, letterSpacing: "0.18em", textTransform: "uppercase" }}>
+        <div style={{ marginTop: 44, opacity: urlProg, fontFamily: FONTS.mono, fontSize: 32, color: COLORS.inkDim, letterSpacing: "0.22em", textTransform: "uppercase", textShadow: "0 0 40px rgba(241,237,232,0.2)" }}>
           xarji.app
+        </div>
+        <div style={{ marginTop: 40, opacity: ctaProg, transform: `translateY(${lerp(16, 0, ctaProg)}px)`, display: "flex", alignItems: "center", gap: 16, background: "rgba(241,237,232,0.07)", border: "1px solid rgba(241,237,232,0.18)", borderRadius: 18, padding: "18px 36px" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 2 }}>
+            <span style={{ fontFamily: FONTS.mono, fontSize: 11, color: COLORS.inkMute, letterSpacing: "0.22em", textTransform: "uppercase" }}>Available for</span>
+            <span style={{ fontFamily: FONTS.sans, fontWeight: 600, fontSize: 22, color: COLORS.ink, letterSpacing: "-0.01em" }}>Download for Mac</span>
+          </div>
+        </div>
+        <div style={{ marginTop: 24, opacity: badgeProg, display: "flex", gap: 20, alignItems: "center", fontFamily: FONTS.mono, fontSize: 13, color: COLORS.inkMute, letterSpacing: "0.2em", textTransform: "uppercase" }}>
+          <span>macOS 14+</span>
+          <span style={{ color: COLORS.lineSoft }}>·</span>
+          <span>iPhone iMessage sync</span>
+          <span style={{ color: COLORS.lineSoft }}>·</span>
+          <span>GPT or Claude · your key</span>
         </div>
       </div>
     </div>
   );
+}
+
+// ── Transitions — black flash at each scene cut ──────────────────────────────
+const SCENE_CUTS = [5.0, 9.0, 13.0, 16.5, 21.5, 26.5, 30.0, 33.5, 38.0, 45.0];
+
+function Transitions() {
+  const time = useTime();
+  let opacity = 0;
+  for (const cut of SCENE_CUTS) {
+    const dt = Math.abs(time - cut);
+    if (dt < 0.12) opacity = Math.max(opacity, 1 - dt / 0.12);
+  }
+  if (opacity < 0.01) return null;
+  return <div style={{ position: "absolute", inset: 0, zIndex: 90, background: "#000", opacity, pointerEvents: "none" }} />;
 }
 
 // ── Top-level composition ───────────────────────────────────────────────────
@@ -638,6 +768,7 @@ export function XarjiVideo() {
     <>
       <style>{`@keyframes p { 0%,100% { opacity:1 } 50% { opacity:0.3 } }`}</style>
       <Sprite start={T.s0[0]} end={T.s0[1]}><Scene0 /></Sprite>
+      <Sprite start={T.sBA[0]} end={T.sBA[1]}><SceneBA /></Sprite>
       <Sprite start={T.s1[0]} end={T.s1[1]}><Scene1 /></Sprite>
       <Sprite start={T.s2[0]} end={T.s2[1]}><Scene2 /></Sprite>
       <Sprite start={T.s3[0]} end={T.s3[1]}><Scene3 /></Sprite>
@@ -650,7 +781,8 @@ export function XarjiVideo() {
       <Brand />
       <HUD />
       <Caption />
-      <Audio src={staticFile("music.mp3")} volume={(f) => f > 1410 ? 0.65 * (1 - (f - 1410) / 90) : 0.65} />
+      <Transitions />
+      <Audio src={staticFile("music.mp3")} volume={(f) => f > 1530 ? 0.65 * (1 - (f - 1530) / 90) : 0.65} />
       <SoundEffects />
     </>
   );
