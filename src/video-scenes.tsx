@@ -97,10 +97,69 @@ function Brand() {
 }
 
 // ── Scene 0 — Problem statement ─────────────────────────────────────────────
-const PROBLEMS = [
-  { text: "No multibanking transaction catalog.", start: 0.5 },
-  { text: "No AI for finance analysis.",          start: 1.9 },
-  { text: "No budgeting planner.",               start: 3.2 },
+
+function FragmentedBanks() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <div style={{ fontFamily: FONTS.mono, fontSize: 11, color: COLORS.inkMute, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 6 }}>3 BANKS · 0 CONNECTION</div>
+      {["TBC Bank", "Bank of Georgia", "Credo Bank"].map((b, i) => (
+        <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", background: COLORS.surface2, borderRadius: 10, border: `1px solid ${COLORS.lineSoft}`, opacity: 0.65 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ width: 28, height: 28, borderRadius: 7, background: COLORS.line, display: "grid", placeItems: "center", fontFamily: FONTS.mono, fontSize: 10, color: COLORS.inkMute }}>{b[0]}</div>
+            <span style={{ fontFamily: FONTS.sans, fontSize: 15, color: COLORS.inkMute }}>{b}</span>
+          </div>
+          <span style={{ fontFamily: FONTS.mono, fontSize: 15, color: COLORS.inkMute }}>₾ ???</span>
+        </div>
+      ))}
+      <div style={{ textAlign: "center", fontFamily: FONTS.mono, fontSize: 11, color: COLORS.coral, letterSpacing: "0.2em", marginTop: 6, opacity: 0.75 }}>SILOED · NOT SYNCED</div>
+    </div>
+  );
+}
+
+function NoAI({ localTime }: { localTime: number }) {
+  const dot = (phase: number) => Math.max(0.15, 0.5 + 0.5 * Math.sin(localTime * 3 + phase));
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ fontFamily: FONTS.mono, fontSize: 11, color: COLORS.inkMute, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 6 }}>NO ASSISTANT</div>
+      <div style={{ padding: "14px 18px", background: COLORS.surface2, borderRadius: "12px 12px 4px 12px", border: `1px solid ${COLORS.lineSoft}`, fontFamily: FONTS.sans, fontSize: 15, color: COLORS.inkMute, alignSelf: "flex-end", maxWidth: "85%", opacity: 0.7 }}>
+        Where did my money go?
+      </div>
+      <div style={{ padding: "16px 20px", background: COLORS.surface2, borderRadius: "4px 12px 12px 12px", border: `1px solid ${COLORS.lineSoft}`, display: "flex", gap: 8, alignItems: "center", alignSelf: "flex-start" }}>
+        {[0, 1.1, 2.2].map((phase, j) => (
+          <div key={j} style={{ width: 9, height: 9, borderRadius: 5, background: COLORS.inkMute, opacity: dot(phase) }} />
+        ))}
+      </div>
+      <div style={{ textAlign: "center", fontFamily: FONTS.mono, fontSize: 11, color: COLORS.coral, letterSpacing: "0.2em", marginTop: 4, opacity: 0.75 }}>NO RESPONSE · NEVER WILL</div>
+    </div>
+  );
+}
+
+function NoBudget() {
+  const r = 72;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}>
+      <div style={{ fontFamily: FONTS.mono, fontSize: 11, color: COLORS.inkMute, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 2 }}>NO LIMITS SET</div>
+      <svg width="180" height="180" viewBox="0 0 180 180">
+        <circle cx="90" cy="90" r={r} fill="none" stroke={COLORS.lineSoft} strokeWidth="10" />
+        <text x="90" y="86" textAnchor="middle" fontFamily={FONTS.sans} fontSize="28" fill={COLORS.inkMute} letterSpacing="-0.02em">₾ ?</text>
+        <text x="90" y="110" textAnchor="middle" fontFamily={FONTS.mono} fontSize="11" fill={COLORS.inkMute} letterSpacing="0.18em">OF ₾ ???</text>
+      </svg>
+      <div style={{ display: "flex", flexDirection: "column", gap: 8, width: "100%" }}>
+        {["Food", "Transport", "Subscriptions"].map((cat, i) => (
+          <div key={i} style={{ display: "flex", justifyContent: "space-between", padding: "8px 12px", background: COLORS.surface2, borderRadius: 8, border: `1px solid ${COLORS.lineSoft}`, opacity: 0.5 }}>
+            <span style={{ fontFamily: FONTS.sans, fontSize: 13, color: COLORS.inkMute }}>{cat}</span>
+            <span style={{ fontFamily: FONTS.mono, fontSize: 13, color: COLORS.inkMute }}>— / —</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const PROBLEM_CARDS = [
+  { start: 0.4, label: "No unified transaction catalog", Content: FragmentedBanks },
+  { start: 1.5, label: "No AI for finance analysis",    Content: NoAI },
+  { start: 2.6, label: "No budgeting planner",          Content: NoBudget },
 ];
 
 function Scene0() {
@@ -108,22 +167,25 @@ function Scene0() {
   const fade = clamp01(localTime / 0.4) * clamp01((duration - localTime) / 0.5);
 
   return (
-    <div style={{ position: "absolute", inset: 0, opacity: fade, background: "#000", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "120px 96px" }}>
-      <div style={{ fontFamily: FONTS.mono, fontSize: 14, color: COLORS.coral, letterSpacing: "0.32em", textTransform: "uppercase", marginBottom: 64 }}>
-        THE PROBLEM TODAY
+    <div style={{ position: "absolute", inset: 0, opacity: fade, background: "#000", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 96px" }}>
+      <div style={{ fontFamily: FONTS.mono, fontSize: 13, color: COLORS.coral, letterSpacing: "0.32em", textTransform: "uppercase", marginBottom: 52 }}>
+        THE STATUS QUO
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 36, alignItems: "flex-start" }}>
-        {PROBLEMS.map((p, i) => {
-          const prog = clamp01((localTime - p.start) / 0.55);
+      <div style={{ display: "flex", gap: 36, alignItems: "stretch", width: "100%", maxWidth: 1600 }}>
+        {PROBLEM_CARDS.map(({ start, label, Content }, i) => {
+          const prog = clamp01((localTime - start) / 0.6);
           const ease = 1 - Math.pow(1 - prog, 3);
           return (
-            <div key={i} style={{ display: "flex", alignItems: "center", gap: 28, opacity: ease, transform: `translateY(${lerp(28, 0, ease)}px)` }}>
-              <div style={{ width: 32, height: 32, borderRadius: 8, border: `2px solid ${COLORS.coral}`, display: "grid", placeItems: "center", flexShrink: 0, color: COLORS.coral, fontFamily: FONTS.mono, fontSize: 18, fontWeight: 700 }}>
-                ×
+            <div key={i} style={{ flex: 1, opacity: ease, transform: `translateY(${lerp(44, 0, ease)}px)`, display: "flex", flexDirection: "column", gap: 20 }}>
+              <div style={{ flex: 1, background: COLORS.surface, border: `1px solid rgba(232,93,74,0.22)`, borderRadius: 20, padding: "28px", position: "relative", overflow: "hidden", boxShadow: `0 0 48px rgba(232,93,74,0.05) inset`, minHeight: 320 }}>
+                <Content localTime={localTime} />
+                <div style={{ position: "absolute", inset: 0, background: "rgba(11,11,13,0.52)", borderRadius: 20, display: "grid", placeItems: "center" }}>
+                  <div style={{ width: 68, height: 68, borderRadius: 14, border: `2.5px solid ${COLORS.coral}`, display: "grid", placeItems: "center", color: COLORS.coral, fontFamily: FONTS.mono, fontSize: 38, fontWeight: 700, boxShadow: `0 0 28px rgba(232,93,74,0.35)`, background: "rgba(11,11,13,0.7)" }}>×</div>
+                </div>
               </div>
-              <span style={{ fontFamily: FONTS.serif, fontStyle: "italic", fontSize: 72, color: COLORS.ink, letterSpacing: "-0.02em", lineHeight: 1.1 }}>
-                {p.text}
-              </span>
+              <div style={{ fontFamily: FONTS.serif, fontStyle: "italic", fontSize: 30, color: COLORS.inkDim, textAlign: "center", lineHeight: 1.3, letterSpacing: "-0.01em" }}>
+                {label}
+              </div>
             </div>
           );
         })}
